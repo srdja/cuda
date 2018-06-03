@@ -5,6 +5,7 @@
 use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::{mem, ptr, result};
+use std::os::raw::c_char;
 
 #[allow(dead_code)]
 #[allow(non_camel_case_types)]
@@ -161,6 +162,17 @@ impl Device {
         unsafe { lift(ll::cuDeviceTotalMem_v2(&mut bytes, self.handle))? };
 
         Ok(bytes)
+    }
+
+    /// Returns the name of the device
+    pub fn get_name(&self) -> Result<String> {
+        // 256 characters is the maximum name length defined in CUDA header.
+        let mut name_buf = [0 as c_char; 256];
+
+        unsafe {
+            lift(ll::cuDeviceGetName(name_buf.as_mut_ptr(), 256, self.handle))?;
+            Ok(CStr::from_ptr(name_buf.as_ptr()).to_str().unwrap().to_owned())
+        }
     }
 
     fn get(&self, attr: ll::CUdevice_attribute) -> Result<i32> {
