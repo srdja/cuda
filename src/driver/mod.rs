@@ -139,6 +139,20 @@ impl Device {
         self.get(CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK)
     }
 
+    /// Returns the minor compute capability
+    pub fn compute_capability_minor(&self) -> Result<i32> {
+        use self::ll::CUdevice_attribute_enum::*;
+
+        self.get(CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR)
+    }
+
+    /// Returns the major compute capability
+    pub fn compute_capability_major(&self) -> Result<i32> {
+        use self::ll::CUdevice_attribute_enum::*;
+
+        self.get(CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR)
+    }
+
     /// Returns the total amount of (non necessarily free) memory, in bytes,
     /// that the device has
     pub fn total_memory(&self) -> Result<usize> {
